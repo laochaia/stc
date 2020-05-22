@@ -1,0 +1,187 @@
+#include<reg51.h>
+#include<intrins.h>
+/*
+P0^0/1/2/3为按键开关
+P1^0/1/2/3为pwm的舵机
+
+*/
+sbit key_0 =P0^0;
+sbit key_1 = P0^1;
+sbit key_2 =P0^2;
+sbit key_3 =P0^3;
+sbit led =P0^4;
+sbit scl_0 =P1^0;
+sbit scl_1 =P1^1;
+sbit scl_2 =P1^2;
+sbit scl_3 =P1^3;
+#define uint unsigned int 
+#define uchar unsigned char 
+#define JISHU_1   1
+#define JISHU_2   2
+
+void Delay1ms(uchar ms)		//@11.0592MHz
+{uchar s;
+
+for (s=ms;s<100;s--){
+	unsigned char i, j;
+
+	_nop_();
+	_nop_();
+	_nop_();
+	i = 11;
+	j = 190;
+   
+	do
+	{
+		while (--j);
+	} while (--i);}
+}
+
+void delay(uint ms)
+{
+
+uint z,x;
+for (z=10;z>0;z--)
+for(x=ms;ms<10;ms--);
+}
+
+
+/*
+定时器T1 精确计时产生时序
+
+*/
+void timer_1()
+{
+/*
+中断打开，还有设置
+
+*/
+EA=1;
+TR1=1;
+ET1=1;
+
+}
+
+void Timer1Init(void)		//100微秒@11.0592MHz
+{
+//	AUXR |= 0x40;		//定时器时钟1T模式
+	TMOD &= 0x0F;		//设置定时器模式
+	TL1 = 0xAE;		//设置定时初值
+	TH1 = 0xFB;		//设置定时初值
+	TF1 = 0;		//清除TF1标志
+	TR1 = 1;		//定时器1开始计时
+    
+}
+
+/*
+通过变量 i  的递增输出不同状态下的计时
+*/
+
+uint flag1;//1ms
+
+uint flag2;//2ms
+void timer1 () interrupt 3 using 1
+{
+   uint i=0;
+   i++;
+  EA=1;
+TR1=1;
+ET1=1;
+	TL1 = 0xAE;		//设置定时初值
+	TH1 = 0xFB;		//设置定时初值
+   
+	if (i==10){
+     //1ms
+      flag1=1;
+}
+	if (i==20)
+	{//2ms
+	flag2=1;
+
+}
+
+ 
+
+}  
+/*
+软件延时模拟pwm 信号的输出
+
+*/
+
+
+void pwm_init()
+{
+if (key_1!=0){
+Delay1ms(10);
+if(key_1=1){
+Delay1ms(10);
+if (flag1){
+//pwm 输入
+
+
+}
+
+
+}
+else{
+led=~led;  
+Delay1ms(10);
+}
+
+}
+
+
+}
+
+
+
+void led_init(){
+
+if (key_0!=0){
+Delay1ms(10);
+if(key_0=1){
+Delay1ms(10);
+led =~led;
+Delay1ms(100);
+}
+else{
+
+led=0;
+}
+Delay1ms(10);
+}
+
+}
+
+void main()
+{
+
+
+EA=1;
+TR1=1;
+ET1=1;
+while(1){
+					/*if (key_0!=1){
+					
+					Delay1ms(10);
+					if (key_0=0){
+					
+						
+					}*/
+					//key_0=0;
+					/*
+					scl_0=0;
+					Delay1ms(40);
+					scl_0=1;
+					*/
+//led_init();//按键检测
+void Timer1Init(void);
+void pwm_init();
+
+
+
+}
+
+
+
+}
